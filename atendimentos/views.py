@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.formats import date_format
 
-from .forms import AtendimentoForm, ClienteForm
+from .forms import AtendimentoForm, ClienteForm, marcar_campos_invalidos
 from .models import Atendimento, Cliente
 
 DIAS_DO_PAINEL = 7
@@ -89,6 +89,7 @@ def cadastrar_cliente(request):
         if formulario.is_valid():
             cliente = formulario.save()
             return redirect("ficha_cliente", cliente_id=cliente.id)
+        marcar_campos_invalidos(formulario)
     else:
         formulario = ClienteForm()
 
@@ -101,6 +102,7 @@ def lancar_atendimento(request):
         if formulario.is_valid():
             atendimento = formulario.save()
             return redirect("ficha_cliente", cliente_id=atendimento.cliente_id)
+        marcar_campos_invalidos(formulario)
     else:
         formulario = AtendimentoForm()
 

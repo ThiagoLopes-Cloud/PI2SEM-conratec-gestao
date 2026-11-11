@@ -3,6 +3,39 @@ body {
   color: #1c2126;
 }
 
+:focus-visible {
+  outline: 3px solid #b45309;
+  outline-offset: 2px;
+}
+
+.link-pular {
+  background-color: #11354f;
+  color: #ffffff;
+  left: 0.5rem;
+  padding: 0.5rem 1rem;
+  position: absolute;
+  top: -4rem;
+  z-index: 10;
+}
+
+.link-pular:focus {
+  top: 0.5rem;
+}
+
+#conteudo:focus {
+  outline: none;
+}
+
+/* O cinza do Bootstrap não chega aos 4.5:1 de contraste sobre o fundo claro. */
+.text-secondary,
+.form-text {
+  color: #44515c !important;
+}
+
+.badge {
+  color: #ffffff;
+}
+
 .cabecalho {
   background-color: #11354f;
   color: #ffffff;
@@ -24,13 +57,32 @@ body {
   color: #ffffff;
 }
 
-.endereco a {
+a {
+  color: #0b5a8a;
+}
+
+.btn-primary {
+  background-color: #0b5a8a;
+  border-color: #0b5a8a;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #08466b;
+  border-color: #08466b;
+}
+
+.btn-link {
   color: #0b5a8a;
 }
 
 .observacoes {
   color: #44515c;
   font-style: italic;
+}
+
+.badge.badge-contagem {
+  background-color: #44515c;
 }
 
 .badge.situacao-a_orcar {

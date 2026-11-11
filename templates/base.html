@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="{% static 'css/conratec.css' %}">
 </head>
 <body>
+  <a class="link-pular" href="#conteudo">Pular para o conteúdo</a>
+
   <header class="cabecalho">
     <div class="container d-flex flex-wrap align-items-center justify-content-between gap-2 py-3">
       <a class="marca" href="{% url 'painel' %}">Conratec</a>
@@ -21,7 +23,7 @@
     </div>
   </header>
 
-  <main class="container py-4">
+  <main class="container py-4" id="conteudo" tabindex="-1">
     {% block conteudo %}{% endblock %}
   </main>
 

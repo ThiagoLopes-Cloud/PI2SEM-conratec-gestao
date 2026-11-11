@@ -3,6 +3,22 @@ from django import forms
 from .models import Atendimento, Cliente, Equipamento
 
 
+def marcar_campos_invalidos(formulario):
+    """Liga cada campo recusado ao texto do erro, para quem usa leitor de tela."""
+    for nome in formulario.errors:
+        campo = formulario.fields.get(nome)
+        if campo is None:
+            continue
+
+        descricoes = []
+        if campo.help_text:
+            descricoes.append(f"id_{nome}_helptext")
+        descricoes.append(f"id_{nome}_erro")
+
+        campo.widget.attrs["aria-invalid"] = "true"
+        campo.widget.attrs["aria-describedby"] = " ".join(descricoes)
+
+
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = Cliente

@@ -19,9 +19,13 @@
       {% if campo.help_text %}
         <p class="form-text" id="{{ campo.auto_id }}_helptext">{{ campo.help_text }}</p>
       {% endif %}
-      {% for erro in campo.errors %}
-        <p class="erro-campo">{{ erro }}</p>
-      {% endfor %}
+      {% if campo.errors %}
+        <div id="{{ campo.auto_id }}_erro">
+          {% for erro in campo.errors %}
+            <p class="erro-campo">{{ erro }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   {% endfor %}
 
