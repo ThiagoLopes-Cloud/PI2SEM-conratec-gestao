@@ -49,6 +49,33 @@ body {
   background-color: #44515c;
 }
 
+.formulario {
+  max-width: 40rem;
+}
+
+.mensagem-cep:empty {
+  display: none;
+}
+
+.mensagem-cep {
+  margin: 0.5rem 0 0;
+}
+
+.mensagem-cep-erro {
+  color: #8a1c1c;
+  font-weight: 600;
+}
+
+.mensagem-cep-ok {
+  color: #1d6137;
+  font-weight: 600;
+}
+
+.erro-campo {
+  color: #8a1c1c;
+  margin: 0.25rem 0 0;
+}
+
 .lista-bairros {
   list-style: none;
   margin: 0 0 1rem;

@@ -1,9 +1,10 @@
 from datetime import timedelta
 
 from django.db.models import Count
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from .forms import ClienteForm
 from .models import Atendimento, Cliente
 
 DIAS_DO_PAINEL = 7
@@ -67,3 +68,15 @@ def ficha_cliente(request, cliente_id):
             ),
         },
     )
+
+
+def cadastrar_cliente(request):
+    if request.method == "POST":
+        formulario = ClienteForm(request.POST)
+        if formulario.is_valid():
+            cliente = formulario.save()
+            return redirect("ficha_cliente", cliente_id=cliente.id)
+    else:
+        formulario = ClienteForm()
+
+    return render(request, "atendimentos/cliente_form.html", {"formulario": formulario})
