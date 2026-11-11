@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.db.models import Count
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
 from .models import Atendimento, Cliente
@@ -49,5 +49,21 @@ def painel(request):
             "total_proximos": proximos.count(),
             "clientes_por_bairro": clientes_por_bairro,
             "total_clientes": sum(linha["total"] for linha in clientes_por_bairro),
+        },
+    )
+
+
+def ficha_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+
+    return render(
+        request,
+        "atendimentos/ficha_cliente.html",
+        {
+            "cliente": cliente,
+            "equipamentos": cliente.equipamentos.all(),
+            "atendimentos": cliente.atendimentos.select_related("equipamento").order_by(
+                "-data_prevista"
+            ),
         },
     )

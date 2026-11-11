@@ -25,7 +25,7 @@
               <div>
                 <p class="mb-1">
                   <strong>{{ atendimento.data_prevista|date:"D, d/m" }}</strong>
-                  - {{ atendimento.cliente.nome }}
+                  - <a href="{% url 'ficha_cliente' atendimento.cliente.id %}">{{ atendimento.cliente.nome }}</a>
                 </p>
                 <p class="mb-1">
                   {{ atendimento.get_tipo_servico_display }}

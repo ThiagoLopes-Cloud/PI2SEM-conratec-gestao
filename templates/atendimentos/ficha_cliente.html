@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ cliente.nome }} - Conratec{% endblock %}
+
+{% block conteudo %}
+<h1 class="h3">{{ cliente.nome }}</h1>
+<p class="text-secondary">{{ cliente.get_tipo_display }} - cliente desde {{ cliente.criado_em|date:"d/m/Y" }}</p>
+
+<section aria-labelledby="titulo-dados" class="mb-5">
+  <h2 id="titulo-dados" class="h5 mb-3">Dados do cliente</h2>
+  <div class="card">
+    <div class="card-body">
+      <dl class="row mb-0">
+        <dt class="col-sm-3">Telefone</dt>
+        <dd class="col-sm-9">{{ cliente.telefone }}</dd>
+
+        <dt class="col-sm-3">Endereço</dt>
+        <dd class="col-sm-9">
+          {{ cliente.endereco_completo }} - CEP {{ cliente.cep }}
+          <a href="{{ cliente.url_maps }}" target="_blank" rel="noopener">Abrir no Maps</a>
+        </dd>
+
+        <dt class="col-sm-3">Observações</dt>
+        <dd class="col-sm-9">{{ cliente.observacoes|default:"Nenhuma observação registrada." }}</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="titulo-equipamentos" class="mb-5">
+  <h2 id="titulo-equipamentos" class="h5 mb-3">Equipamentos instalados</h2>
+  {% if equipamentos %}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <caption class="visually-hidden">Equipamentos instalados no endereço do cliente</caption>
+        <thead>
+          <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">Capacidade</th>
+            <th scope="col">Local instalado</th>
+            <th scope="col">Instalado em</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for equipamento in equipamentos %}
+            <tr>
+              <td>{{ equipamento.modelo }}</td>
+              <td>{{ equipamento.capacidade_btu }} BTU</td>
+              <td>{{ equipamento.local_instalado }}</td>
+              <td>{{ equipamento.data_instalacao|date:"d/m/Y" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>Nenhum equipamento cadastrado para este cliente.</p>
+  {% endif %}
+</section>
+
+<section aria-labelledby="titulo-historico">
+  <h2 id="titulo-historico" class="h5 mb-3">Histórico de atendimentos</h2>
+  {% if atendimentos %}
+    <ul class="list-group">
+      {% for atendimento in atendimentos %}
+        <li class="list-group-item">
+          <div class="d-flex flex-wrap justify-content-between gap-2">
+            <div>
+              <p class="mb-1">
+                <strong>{{ atendimento.data_prevista|date:"d/m/Y" }}</strong>
+                - {{ atendimento.get_tipo_servico_display }}
+              </p>
+              {% if atendimento.equipamento %}
+                <p class="mb-1">{{ atendimento.equipamento.modelo }} ({{ atendimento.equipamento.local_instalado }})</p>
+              {% endif %}
+              {% if atendimento.observacoes %}
+                <p class="observacoes mb-0">{{ atendimento.observacoes }}</p>
+              {% endif %}
+            </div>
+            <div class="text-end">
+              <span class="badge situacao-{{ atendimento.situacao }}">{{ atendimento.get_situacao_display }}</span>
+              <p class="mb-0 mt-2">
+                {% if atendimento.valor %}R$ {{ atendimento.valor }}{% else %}Sem valor definido{% endif %}
+              </p>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nenhum atendimento registrado para este cliente.</p>
+  {% endif %}
+</section>
+{% endblock %}
