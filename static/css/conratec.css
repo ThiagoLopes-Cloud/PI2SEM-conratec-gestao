@@ -1,0 +1,85 @@
+body {
+  background-color: #f4f6f8;
+  color: #1c2126;
+}
+
+.cabecalho {
+  background-color: #11354f;
+  color: #ffffff;
+}
+
+.marca {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cabecalho .nav-link {
+  color: #e4ecf3;
+}
+
+.cabecalho .nav-link:hover,
+.cabecalho .nav-link:focus {
+  color: #ffffff;
+}
+
+.endereco a {
+  color: #0b5a8a;
+}
+
+.observacoes {
+  color: #44515c;
+  font-style: italic;
+}
+
+.badge.situacao-a_orcar {
+  background-color: #7a4b00;
+}
+
+.badge.situacao-orcado {
+  background-color: #0b5a8a;
+}
+
+.badge.situacao-agendado {
+  background-color: #1d6137;
+}
+
+.badge.situacao-concluido {
+  background-color: #44515c;
+}
+
+.lista-bairros {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.lista-bairros li {
+  align-items: center;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 10rem 1fr 8rem;
+  margin-bottom: 0.5rem;
+}
+
+.barra {
+  background-color: #dde3e9;
+  border-radius: 0.25rem;
+  display: block;
+  height: 1.25rem;
+  overflow: hidden;
+}
+
+.barra-preenchida {
+  background-color: #11354f;
+  display: block;
+  height: 100%;
+}
+
+@media (max-width: 575px) {
+  .lista-bairros li {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}

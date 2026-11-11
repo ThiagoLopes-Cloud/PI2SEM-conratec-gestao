@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block titulo %}Painel - Conratec{% endblock %}
+
+{% block conteudo %}
+<h1 class="h3">Painel de atendimentos</h1>
+<p class="text-secondary">
+  Próximos 7 dias, de {{ hoje|date:"d/m/Y" }} a {{ ultimo_dia|date:"d/m/Y" }}:
+  {{ total_proximos }} atendimento{{ total_proximos|pluralize:"s" }}.
+</p>
+
+<section aria-labelledby="titulo-agenda" class="mb-5">
+  <h2 id="titulo-agenda" class="h5 mb-3">Agenda por região</h2>
+
+  {% for grupo in bairros %}
+    <article class="card mb-3">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="h6 mb-0">{{ grupo.bairro }}</h3>
+        <span class="badge bg-secondary">{{ grupo.total }} atendimento{{ grupo.total|pluralize:"s" }}</span>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for atendimento in grupo.atendimentos %}
+          <li class="list-group-item">
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <div>
+                <p class="mb-1">
+                  <strong>{{ atendimento.data_prevista|date:"D, d/m" }}</strong>
+                  - {{ atendimento.cliente.nome }}
+                </p>
+                <p class="mb-1">
+                  {{ atendimento.get_tipo_servico_display }}
+                  {% if atendimento.equipamento %}
+                    - {{ atendimento.equipamento.modelo }} ({{ atendimento.equipamento.local_instalado }})
+                  {% endif %}
+                </p>
+                <p class="endereco mb-0">
+                  {{ atendimento.cliente.endereco_completo }}
+                  <a href="{{ atendimento.cliente.url_maps }}" target="_blank" rel="noopener">
+                    Abrir no Maps
+                  </a>
+                </p>
+                {% if atendimento.observacoes %}
+                  <p class="observacoes mb-0">{{ atendimento.observacoes }}</p>
+                {% endif %}
+              </div>
+              <div class="text-end">
+                <span class="badge situacao-{{ atendimento.situacao }}">{{ atendimento.get_situacao_display }}</span>
+                <p class="mb-0 mt-2">
+                  {% if atendimento.valor %}R$ {{ atendimento.valor }}{% else %}Sem valor definido{% endif %}
+                </p>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  {% empty %}
+    <p>Nenhum atendimento previsto para os próximos 7 dias.</p>
+  {% endfor %}
+</section>
+
+<section aria-labelledby="titulo-clientes">
+  <h2 id="titulo-clientes" class="h5 mb-3">Onde estão meus clientes</h2>
+
+  {% if clientes_por_bairro %}
+    <ul class="lista-bairros">
+      {% for linha in clientes_por_bairro %}
+        <li>
+          <span class="nome-bairro">{{ linha.bairro }}</span>
+          <span class="barra" aria-hidden="true">
+            <span class="barra-preenchida" style="width: {{ linha.largura }}%"></span>
+          </span>
+          <span class="contagem">{{ linha.total }} cliente{{ linha.total|pluralize:"s" }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+    <p class="text-secondary">Total de {{ total_clientes }} clientes cadastrados.</p>
+  {% else %}
+    <p>Nenhum cliente cadastrado ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}
