@@ -256,6 +256,43 @@ ATENDIMENTOS = [
         "760.00",
         "Troca da placa eletrônica.",
     ),
+    # A padaria é cliente antiga e serve para demonstrar o histórico da ficha.
+    (
+        "Padaria Pão da Vila",
+        "Salão de atendimento",
+        Atendimento.TipoServico.LIMPEZA,
+        Atendimento.Situacao.CONCLUIDO,
+        -45,
+        "150.00",
+        "",
+    ),
+    (
+        "Padaria Pão da Vila",
+        "Área de produção",
+        Atendimento.TipoServico.CORRETIVA,
+        Atendimento.Situacao.CONCLUIDO,
+        -118,
+        "890.00",
+        "Troca do capacitor da condensadora.",
+    ),
+    (
+        "Padaria Pão da Vila",
+        "Salão de atendimento",
+        Atendimento.TipoServico.PREVENTIVA,
+        Atendimento.Situacao.CONCLUIDO,
+        -205,
+        "380.00",
+        "",
+    ),
+    (
+        "Padaria Pão da Vila",
+        "Área de produção",
+        Atendimento.TipoServico.INSTALACAO,
+        Atendimento.Situacao.CONCLUIDO,
+        -300,
+        "2400.00",
+        "Instalação do piso teto na área de produção.",
+    ),
 ]
 
 
