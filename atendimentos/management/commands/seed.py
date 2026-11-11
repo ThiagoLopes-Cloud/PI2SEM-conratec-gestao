@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -332,6 +332,19 @@ class Command(BaseCommand):
                     "observacoes": observacoes,
                 },
             )
+
+        # A data de cadastro é preenchida sozinha. Sem este ajuste todo cliente
+        # apareceria como cadastrado hoje, com histórico anterior ao cadastro.
+        for cliente in clientes.values():
+            datas = [
+                equipamento.data_instalacao
+                for equipamento in cliente.equipamentos.all()
+            ] + [
+                atendimento.data_prevista for atendimento in cliente.atendimentos.all()
+            ]
+            if datas:
+                cadastro = timezone.make_aware(datetime.combine(min(datas), time(9)))
+                Cliente.objects.filter(pk=cliente.pk).update(criado_em=cadastro)
 
         self.stdout.write(
             "Dados de exemplo carregados: "
