@@ -49,6 +49,16 @@ body {
   background-color: #44515c;
 }
 
+.alternancia a {
+  margin-left: 0.5rem;
+}
+
+.alternancia .agrupamento-atual {
+  color: #1c2126;
+  font-weight: 600;
+  text-decoration: none;
+}
+
 .formulario {
   max-width: 40rem;
 }

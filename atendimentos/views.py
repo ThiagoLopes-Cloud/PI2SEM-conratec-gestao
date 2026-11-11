@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.formats import date_format
 
 from .forms import AtendimentoForm, ClienteForm
 from .models import Atendimento, Cliente
@@ -14,19 +15,30 @@ def painel(request):
     hoje = timezone.localdate()
     ultimo_dia = hoje + timedelta(days=DIAS_DO_PAINEL)
 
+    agrupar_por_data = request.GET.get("agrupar") == "data"
+
+    if agrupar_por_data:
+        ordem = ("data_prevista", "cliente__bairro", "cliente__nome")
+    else:
+        ordem = ("cliente__bairro", "data_prevista", "cliente__nome")
+
     proximos = (
         Atendimento.objects.filter(data_prevista__range=(hoje, ultimo_dia))
         .select_related("cliente", "equipamento")
-        .order_by("cliente__bairro", "data_prevista", "cliente__nome")
+        .order_by(*ordem)
     )
 
     grupos = {}
     for atendimento in proximos:
-        grupos.setdefault(atendimento.cliente.bairro, []).append(atendimento)
+        if agrupar_por_data:
+            titulo = date_format(atendimento.data_prevista, "l, d/m/Y").capitalize()
+        else:
+            titulo = atendimento.cliente.bairro
+        grupos.setdefault(titulo, []).append(atendimento)
 
-    bairros = [
-        {"bairro": bairro, "atendimentos": atendimentos, "total": len(atendimentos)}
-        for bairro, atendimentos in grupos.items()
+    grupos_do_painel = [
+        {"titulo": titulo, "atendimentos": atendimentos, "total": len(atendimentos)}
+        for titulo, atendimentos in grupos.items()
     ]
 
     clientes_por_bairro = list(
@@ -46,8 +58,9 @@ def painel(request):
         {
             "hoje": hoje,
             "ultimo_dia": ultimo_dia,
-            "bairros": bairros,
-            "total_proximos": proximos.count(),
+            "agrupar_por_data": agrupar_por_data,
+            "grupos": grupos_do_painel,
+            "total_proximos": len(proximos),
             "clientes_por_bairro": clientes_por_bairro,
             "total_clientes": sum(linha["total"] for linha in clientes_por_bairro),
         },

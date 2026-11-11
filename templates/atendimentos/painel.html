@@ -10,12 +10,20 @@
 </p>
 
 <section aria-labelledby="titulo-agenda" class="mb-5">
-  <h2 id="titulo-agenda" class="h5 mb-3">Agenda por região</h2>
+  <h2 id="titulo-agenda" class="h5 mb-3">
+    {% if agrupar_por_data %}Agenda por data{% else %}Agenda por região{% endif %}
+  </h2>
 
-  {% for grupo in bairros %}
+  <nav class="alternancia mb-3" aria-label="Forma de agrupar a agenda">
+    Agrupar por:
+    <a href="?agrupar=regiao" {% if not agrupar_por_data %}aria-current="true" class="agrupamento-atual"{% endif %}>região</a>
+    <a href="?agrupar=data" {% if agrupar_por_data %}aria-current="true" class="agrupamento-atual"{% endif %}>data</a>
+  </nav>
+
+  {% for grupo in grupos %}
     <article class="card mb-3">
       <div class="card-header d-flex justify-content-between align-items-center">
-        <h3 class="h6 mb-0">{{ grupo.bairro }}</h3>
+        <h3 class="h6 mb-0">{{ grupo.titulo }}</h3>
         <span class="badge bg-secondary">{{ grupo.total }} atendimento{{ grupo.total|pluralize:"s" }}</span>
       </div>
       <ul class="list-group list-group-flush">
