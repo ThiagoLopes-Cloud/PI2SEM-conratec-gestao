@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block titulo %}Novo atendimento - Conratec{% endblock %}
+
+{% block conteudo %}
+<h1 class="h3">Novo atendimento</h1>
+
+<form method="post" novalidate class="formulario">
+  {% csrf_token %}
+
+  {% if formulario.non_field_errors %}
+    <div class="alert alert-danger">{{ formulario.non_field_errors }}</div>
+  {% endif %}
+
+  {% for campo in formulario %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+      {{ campo }}
+      {% if campo.help_text %}
+        <p class="form-text" id="{{ campo.auto_id }}_helptext">{{ campo.help_text }}</p>
+      {% endif %}
+      {% for erro in campo.errors %}
+        <p class="erro-campo">{{ erro }}</p>
+      {% endfor %}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary">Salvar atendimento</button>
+  <a class="btn btn-link" href="{% url 'painel' %}">Voltar ao painel</a>
+</form>
+{% endblock %}

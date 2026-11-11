@@ -4,7 +4,7 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import ClienteForm
+from .forms import AtendimentoForm, ClienteForm
 from .models import Atendimento, Cliente
 
 DIAS_DO_PAINEL = 7
@@ -80,3 +80,17 @@ def cadastrar_cliente(request):
         formulario = ClienteForm()
 
     return render(request, "atendimentos/cliente_form.html", {"formulario": formulario})
+
+
+def lancar_atendimento(request):
+    if request.method == "POST":
+        formulario = AtendimentoForm(request.POST)
+        if formulario.is_valid():
+            atendimento = formulario.save()
+            return redirect("ficha_cliente", cliente_id=atendimento.cliente_id)
+    else:
+        formulario = AtendimentoForm()
+
+    return render(
+        request, "atendimentos/atendimento_form.html", {"formulario": formulario}
+    )
