@@ -129,8 +129,13 @@ O painel aceita `?agrupar=regiao` e `?agrupar=data` para alternar o agrupamento.
 ### Dados de exemplo
 
 O comando `seed` cria 12 clientes fictícios distribuídos em quatro bairros de
-Várzea Paulista, seus equipamentos e atendimentos nos próximos dias. Pode ser
-executado mais de uma vez sem duplicar registros.
+Várzea Paulista, seus equipamentos e atendimentos nos próximos dias. As datas
+são contadas a partir do dia em que o comando roda, então o painel sempre tem o
+que mostrar.
+
+Cada execução refaz essa carga do zero: os 12 clientes fictícios e tudo que está
+ligado a eles são apagados e criados de novo. Clientes cadastrados pelo sistema
+não são afetados.
 
 ### Área administrativa
 

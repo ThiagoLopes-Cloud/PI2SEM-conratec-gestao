@@ -297,40 +297,44 @@ ATENDIMENTOS = [
 
 
 class Command(BaseCommand):
-    help = "Carrega clientes, equipamentos e atendimentos fictícios para demonstração."
+    help = (
+        "Recria os clientes, equipamentos e atendimentos fictícios de "
+        "demonstração. Apaga e refaz esses registros; clientes cadastrados pelo "
+        "sistema não são tocados."
+    )
 
     def handle(self, *args, **opcoes):
         hoje = timezone.localdate()
 
+        # As datas são contadas a partir do dia em que o comando roda, então a
+        # carga é refeita do zero. Reaproveitar o que já existe faria o mesmo
+        # atendimento entrar de novo a cada dia diferente.
+        Cliente.objects.filter(nome__in=[dados["nome"] for dados in CLIENTES]).delete()
+
         clientes = {}
         for dados in CLIENTES:
-            cliente, _ = Cliente.objects.get_or_create(nome=dados["nome"], defaults=dados)
+            cliente = Cliente.objects.create(**dados)
             clientes[cliente.nome] = cliente
 
         equipamentos = {}
         for nome_cliente, modelo, btu, local, dias_desde_instalacao in EQUIPAMENTOS:
-            equipamento, _ = Equipamento.objects.get_or_create(
+            equipamentos[(nome_cliente, local)] = Equipamento.objects.create(
                 cliente=clientes[nome_cliente],
+                modelo=modelo,
+                capacidade_btu=btu,
                 local_instalado=local,
-                defaults={
-                    "modelo": modelo,
-                    "capacidade_btu": btu,
-                    "data_instalacao": hoje + timedelta(days=dias_desde_instalacao),
-                },
+                data_instalacao=hoje + timedelta(days=dias_desde_instalacao),
             )
-            equipamentos[(nome_cliente, local)] = equipamento
 
         for nome_cliente, local, servico, situacao, dias, valor, observacoes in ATENDIMENTOS:
-            Atendimento.objects.get_or_create(
+            Atendimento.objects.create(
                 cliente=clientes[nome_cliente],
+                equipamento=equipamentos.get((nome_cliente, local)),
                 tipo_servico=servico,
+                situacao=situacao,
                 data_prevista=hoje + timedelta(days=dias),
-                defaults={
-                    "equipamento": equipamentos.get((nome_cliente, local)),
-                    "situacao": situacao,
-                    "valor": valor,
-                    "observacoes": observacoes,
-                },
+                valor=valor,
+                observacoes=observacoes,
             )
 
         # A data de cadastro é preenchida sozinha. Sem este ajuste todo cliente
@@ -347,7 +351,7 @@ class Command(BaseCommand):
                 Cliente.objects.filter(pk=cliente.pk).update(criado_em=cadastro)
 
         self.stdout.write(
-            "Dados de exemplo carregados: "
+            "Dados de exemplo recriados. O banco tem agora "
             f"{Cliente.objects.count()} clientes, "
             f"{Equipamento.objects.count()} equipamentos e "
             f"{Atendimento.objects.count()} atendimentos."
