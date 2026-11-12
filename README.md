@@ -69,26 +69,50 @@ dele, por isso não há cadastro de usuários nem tela de login.
    pip install -r requirements.txt
    ```
 
-5. Crie o banco de dados:
+5. Ligue o modo de desenvolvimento. Sem isso o Django entende que está em
+   produção e exige a chave secreta em variável de ambiente.
+
+   Windows (Prompt de Comando):
+
+   ```
+   set DJANGO_DEBUG=1
+   ```
+
+   Windows (PowerShell):
+
+   ```
+   $env:DJANGO_DEBUG = "1"
+   ```
+
+   Linux ou macOS:
+
+   ```
+   export DJANGO_DEBUG=1
+   ```
+
+   A variável vale enquanto o terminal estiver aberto. Em um terminal novo,
+   defina de novo antes dos comandos seguintes.
+
+6. Crie o banco de dados:
 
    ```
    python manage.py migrate
    ```
 
-6. Carregue os dados de exemplo (opcional, mas recomendado para conhecer o
+7. Carregue os dados de exemplo (opcional, mas recomendado para conhecer o
    sistema com o painel já preenchido):
 
    ```
    python manage.py seed
    ```
 
-7. Suba o servidor:
+8. Suba o servidor:
 
    ```
    python manage.py runserver
    ```
 
-8. Abra http://127.0.0.1:8000/ no navegador.
+9. Abra http://127.0.0.1:8000/ no navegador.
 
 ### Telas
 
@@ -143,6 +167,47 @@ conratec-gestao/
 └── requirements.txt
 ```
 
+## Publicação
+
+O projeto está preparado para rodar em servidor com SQLite e arquivos estáticos
+servidos pelo WhiteNoise, sem depender de configuração de servidor web para o
+CSS e o JavaScript.
+
+### Variáveis de ambiente
+
+| Variável                | Obrigatória            | O que faz |
+| ----------------------- | ---------------------- | --------- |
+| `DJANGO_SECRET_KEY`     | Sim, em produção       | Chave usada para assinar sessões e formulários. Em produção a aplicação se recusa a subir sem ela, com mensagem explicando o que falta. Em desenvolvimento, uma chave é sorteada a cada inicialização. Nunca deve ser escrita em arquivo do repositório. |
+| `DJANGO_ALLOWED_HOSTS`  | Sim, em produção       | Endereços pelos quais o sistema aceita ser acessado, separados por vírgula, por exemplo `conratec.pythonanywhere.com`. Sem o endereço correto o Django recusa as requisições. O padrão é `127.0.0.1,localhost`. |
+| `DJANGO_DEBUG`          | Não                    | `1` liga o modo de desenvolvimento: páginas de erro detalhadas e chave sorteada. Qualquer outro valor, ou a ausência da variável, deixa o sistema em modo de produção. Nunca ligar em servidor público. |
+
+Com `DJANGO_DEBUG` desligado o sistema também passa a recusar conteúdo com tipo
+declarado errado, bloquear exibição em quadro de outro site e exigir conexão
+segura para os cookies de sessão e de formulário.
+
+### Passos no servidor
+
+```
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py collectstatic --noinput
+python manage.py seed
+```
+
+O `collectstatic` reúne o CSS e o JavaScript em `staticfiles/`, com nome
+versionado e versão comprimida de cada arquivo. Precisa ser executado de novo a
+cada alteração nesses arquivos. O `seed` só faz sentido em ambiente de
+demonstração.
+
+A geração de chave secreta pode ser feita com:
+
+```
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+
+O valor gerado vai na variável de ambiente do servidor, não em arquivo do
+projeto.
+
 ## Tecnologias e por que foram escolhidas
 
 **Django 5.2.** Entrega ORM, formulários validados, roteamento e área
@@ -161,6 +226,10 @@ introduzir etapa de build no projeto. As cores próprias ficam em
 busca de CEP. Uma biblioteca de interface custaria mais em dependência e tempo
 de carga do que economizaria em código.
 
+**WhiteNoise.** Entrega os arquivos estáticos pela própria aplicação. Evita
+configurar servidor web separado para o CSS e o JavaScript em uma hospedagem
+simples, e serve os arquivos com nome versionado e comprimidos.
+
 **API ViaCEP.** Preenche endereço, bairro e cidade a partir do CEP. Reduz erro de
 digitação no dado que o painel usa para agrupar por região. É pública e não exige
 cadastro nem chave de acesso.
@@ -174,5 +243,6 @@ mínimo 4,5:1 entre texto e fundo.
 ## O que não está incluído
 
 - Autenticação de usuários.
-- Publicação em servidor. O projeto roda localmente.
 - Testes automatizados.
+
+O sistema está configurado para publicação, mas ainda não há instância no ar.
